@@ -40,8 +40,8 @@ export class Recipely {
     this.signUpLink = page.getByRole('button', { name: /Create account/i }).last();
   }
 
-  /** Navigate to the app root and wait for the login surface to render. */
-  async goto(path = '/'): Promise<void> {
+  /** Navigate to the login page (the root is the guest feed now) and wait for the login surface to render. */
+  async goto(path = '/login'): Promise<void> {
     await this.page.goto(path, { waitUntil: 'load' });
     // RN Web hydrates client-side; wait for the auth card to appear.
     await expect(this.emailInput).toBeVisible({ timeout: 20_000 });

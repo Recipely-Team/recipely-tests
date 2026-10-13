@@ -81,7 +81,7 @@ export function sampleRecipeBody(label = 'E2E'): Record<string, unknown> {
   return {
     name: { en: `${tag} Test Recipe` },
     cuisine: 'TURKISH',
-    category: 'DINNER',
+    category: 'MAIN_COURSE',
     difficulty: 'EASY',
     ingredients: { en: ['1 cup water', '1 tsp salt'] },
     instructions: { en: ['Bring water to a boil.', 'Add salt and serve.'] },
