@@ -22,6 +22,7 @@ import { WEB_URL } from './helpers/config';
  */
 export default defineConfig({
   testDir: './tests',
+  globalSetup: './global-setup.ts',
   timeout: 60 * 1000,
   expect: { timeout: 10 * 1000 },
   fullyParallel: true,

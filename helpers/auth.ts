@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { test as base, type APIRequestContext } from '@playwright/test';
 import { RecipelyApi } from './api';
 import {
@@ -51,10 +53,12 @@ export const AUTH_SKIP_REASON =
  */
 export async function login(request: APIRequestContext): Promise<Session> {
   const api = new RecipelyApi(request);
-  const result = await api.post(AUTH_LOGIN_PATH, {
-    email: TEST_EMAIL,
-    password: TEST_PASSWORD,
-  });
+  const result = await api.post(
+    AUTH_LOGIN_PATH,
+    { email: TEST_EMAIL, password: TEST_PASSWORD },
+    undefined,
+    LOGIN_TIMEOUT_MS,
+  );
   if (result.status !== 200) {
     throw new Error(
       `Login failed (${result.status}). Check RECIPELY_TEST_EMAIL/PASSWORD and ` +
@@ -144,12 +148,32 @@ export const test = base.extend<{ api: RecipelyApi; session: Session }>({
     // Cache the session for the lifetime of this worker process. Every spec in
     // a worker shares ONE login instead of re-authenticating per test, which
     // keeps the run fast and avoids pummeling the production auth endpoint.
-    if (!cachedSession) cachedSession = await login(request);
+    if (!cachedSession) cachedSession = readSharedSession() ?? (await login(request));
     await use(cachedSession);
   },
 });
 
 /** Per-worker login cache (each Playwright worker is its own process). */
 let cachedSession: Session | undefined;
+
+/**
+ * Password hashing makes a login slow on purpose; ten workers signing in at
+ * the same moment queued past the 15 s request default and failed the test
+ * before it started. The run now logs in ONCE (global-setup.ts) and the
+ * workers read that session from {@link SESSION_FILE}; the longer timeout is
+ * for the fallback login when the file is missing.
+ */
+const LOGIN_TIMEOUT_MS = 45_000;
+
+/** The run's shared session, written by global-setup.ts (gitignored folder). */
+export const SESSION_FILE = path.join(process.cwd(), 'test-results', '.session.json');
+
+function readSharedSession(): Session | undefined {
+  try {
+    return JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8')) as Session;
+  } catch {
+    return undefined;
+  }
+}
 
 export { expect } from '@playwright/test';

@@ -4,8 +4,10 @@ Full-stack automation for **Recipely**, covering every surface:
 
 - **Backend** — `api.recipely.net`: **every service** exercised over the
   AES-256-GCM `/api/v1` encrypted envelope (auth, recipes, taxonomy, me,
-  favorites, likes, comments, drafts, users, notifications, AI, plus the
-  cross-cutting security contract), and the plain health + static legal pages.
+  favorites, likes, comments, drafts, users, notifications, AI, meal plan,
+  shopping list, diary / meal log, fridge, feedback, feature flags, trending
+  and the Chefs list, plus the cross-cutting security contract), and the plain
+  health + static legal pages.
   Each backend spec runs **twice**:
   - **`backend-direct`** — a server-to-server caller (like curl/Node). Proves
     each service works for any authorized client.
@@ -34,6 +36,20 @@ Two reports are produced on every run, both in English:
   in any browser.
 - **`playwright-report/index.html`** — the stock Playwright report (traces,
   screenshots, videos for failures).
+
+## Shared test account and dated writes
+
+The authed specs share one account. `global-setup.ts` logs it in once per run
+and the workers read that session from `test-results/.session.json`; parallel
+logins used to queue behind password hashing and time out.
+
+The meal plan and diary write to dated, account-wide stores, so each backend
+project writes only inside its own far-future month (`helpers/calendar.ts`:
+direct = March 2031, mobile = May 2031) and clears it afterwards. The shopping
+list's writes (including the account-wide "clear checked") run once, on
+`backend-direct`. Contract checks on model-backed routes (fridge ideas, meal
+parse) stop at validation, but the AI rate limiter still counts them, so they
+also run once.
 
 ## App flow under test
 
