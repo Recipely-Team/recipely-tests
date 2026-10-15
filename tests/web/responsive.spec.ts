@@ -30,6 +30,8 @@ test.describe('Web · responsive layout', () => {
   });
 
   test('the sign-in CTA stays within the viewport width', async ({ page }) => {
+    // Measure after the client has rendered it; WebKit reported a null box mid-hydration.
+    await expect(app.signInButton).toBeVisible();
     const box = await app.signInButton.boundingBox();
     const viewport = page.viewportSize();
     expect(box).not.toBeNull();

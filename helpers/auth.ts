@@ -90,6 +90,8 @@ export function sampleRecipeBody(label = 'E2E'): Record<string, unknown> {
     servings: 2,
     caloriesPerServing: 120,
     image: 'https://recipely.net/assets/placeholder.jpg',
+    // Kept in the owner's library: publishing has its own rules (an own cover photo), which a disposable recipe does not need.
+    visibility: 'private',
   };
 }
 

@@ -47,8 +47,9 @@ export const HEALTH_URL: string = `${API_URL}/health`;
 export const API_V1_URL: string = `${API_URL}/api/v1`;
 
 /** Public legal pages served as static HTML at the server root. */
-export const PRIVACY_URL: string = `${API_URL}/privacy`;
-export const TERMS_URL: string = `${API_URL}/terms`;
+// The legal pages moved from the API host to the website.
+export const PRIVACY_URL: string = `${WEB_URL}/privacy`;
+export const TERMS_URL: string = `${WEB_URL}/terms`;
 
 /**
  * AES-256-GCM key for the /api/v1 envelope. The all-zeros default matches the

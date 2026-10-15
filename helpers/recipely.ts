@@ -33,7 +33,8 @@ export class Recipely {
     this.emailInput = page.getByPlaceholder('Email');
     this.passwordInput = page.getByPlaceholder('Password');
     // The primary CTA Pressable has no accessibilityRole, so match by text.
-    this.signInButton = page.getByText('Sign in', { exact: true });
+    // The visible button, not a hidden "Sign in" text elsewhere on the page (its box measured as null on WebKit / iPad).
+    this.signInButton = page.getByText('Sign in', { exact: true }).locator('visible=true').first();
     this.googleButton = page.getByText(/Continue with Google/i);
     this.appleButton = page.getByText(/Continue with Apple/i);
     this.forgotLink = page.getByRole('button', { name: /Forgot password/i });
