@@ -18,11 +18,11 @@ const UNKNOWN_UUID = '00000000-0000-0000-0000-000000000000';
  * rules instead: self-follow is rejected, and follow requires auth.
  */
 test.describe('Backend · users service', () => {
-  base('GET a user profile without a token returns an encrypted 401', async ({ request }) => {
+  // Public profiles are browsable by guests; an unknown id is a 404, never a 401.
+  base('GET a user profile without a token is allowed for guests', async ({ request }) => {
     const api = new RecipelyApi(request);
     const result = await api.get(userPath(UNKNOWN_UUID));
-    expect(result.status).toBe(401);
-    expect(result.envelope).toBeDefined();
+    expect([200, 404]).toContain(result.status);
   });
 
   test.describe('authenticated', () => {

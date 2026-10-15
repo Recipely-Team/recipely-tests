@@ -11,9 +11,9 @@ test.describe('Web · authentication', () => {
   });
 
   test('empty fields do not submit (stays on login, no error)', async ({ page }) => {
-    await app.signInButton.click();
-    // The handler early-returns on empty fields, so the form stays put and no
-    // error banner is shown.
+    // The button is disabled while a field is empty; a press (forced past
+    // Playwright's enabled-wait) must do nothing — no submit, no error banner.
+    await app.signInButton.click({ force: true });
     await expect(app.emailInput).toBeVisible();
     await expect(page.getByText(/Invalid email or password/i)).toHaveCount(0);
   });

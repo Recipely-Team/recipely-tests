@@ -24,17 +24,24 @@ import {
  */
 const UNKNOWN_UUID = '11111111-1111-1111-1111-111111111111';
 
-const PROTECTED_GET_ROUTES: ReadonlyArray<readonly [string, string]> = [
+/**
+ * Guests browse without an account (Apple Guideline 5.1.1(v)): these answer
+ * a missing token with content (or 404 for an unknown id), never 401.
+ */
+const PUBLIC_GET_ROUTES: ReadonlyArray<readonly [string, string]> = [
   ['recipes list', RECIPES_PATH],
   ['categories', RECIPE_CATEGORIES_PATH],
   ['cuisines', RECIPE_CUISINES_PATH],
   ['recipe by id', recipePath(UNKNOWN_UUID)],
+  ['user profile', userPath(UNKNOWN_UUID)],
+];
+
+const PROTECTED_GET_ROUTES: ReadonlyArray<readonly [string, string]> = [
   ['my profile', ME_PATH],
   ['my recipes', ME_RECIPES_PATH],
   ['my favorites', ME_FAVORITES_PATH],
   ['my notifications', ME_NOTIFICATIONS_PATH],
   ['my drafts', DRAFTS_PATH],
-  ['user profile', userPath(UNKNOWN_UUID)],
 ];
 
 test.describe('Backend · security contract', () => {
@@ -46,6 +53,16 @@ test.describe('Backend · security contract', () => {
         expect(result.status).toBe(401);
         // The 401 body is an AES envelope — error responses are encrypted too.
         expect(result.envelope, 'unauthorized body should be an AES envelope').toBeDefined();
+      });
+    }
+  });
+
+  test.describe('guest browsing routes answer without a token', () => {
+    for (const [name, path] of PUBLIC_GET_ROUTES) {
+      test(`GET ${name} → not 401`, async ({ request }) => {
+        const api = new RecipelyApi(request);
+        const result = await api.get(path);
+        expect([200, 404]).toContain(result.status);
       });
     }
   });

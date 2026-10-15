@@ -12,17 +12,17 @@ import { RECIPE_CUISINES_PATH, RECIPE_CATEGORIES_PATH } from '../../helpers/conf
  * `{ key, name, emoji }` items in its locale.
  */
 test.describe('Backend · taxonomy catalog', () => {
-  // Auth enforcement is checked even without credentials: an enveloped 401.
-  base.describe('auth enforcement', () => {
+  // The catalog is public (guest browsing): no token still gets an enveloped 200.
+  base.describe('guest access', () => {
     for (const [name, path] of [
       ['cuisines', RECIPE_CUISINES_PATH],
       ['categories', RECIPE_CATEGORIES_PATH],
     ] as const) {
-      base(`GET ${name} without a token returns an encrypted 401`, async ({ request }) => {
+      base(`GET ${name} without a token serves guests`, async ({ request }) => {
         const api = new RecipelyApi(request);
         const result = await api.get(path);
-        expect(result.status).toBe(401);
-        // Even the rejection is enveloped — encryption is end-to-end.
+        expect(result.status).toBe(200);
+        // Encryption is end-to-end, for guests too.
         expect(result.envelope).toBeDefined();
       });
     }

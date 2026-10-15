@@ -81,7 +81,7 @@ export function sampleRecipeBody(label = 'E2E'): Record<string, unknown> {
   return {
     name: { en: `${tag} Test Recipe` },
     cuisine: 'TURKISH',
-    category: 'DINNER',
+    category: 'MAIN_COURSE',
     difficulty: 'EASY',
     ingredients: { en: ['1 cup water', '1 tsp salt'] },
     instructions: { en: ['Bring water to a boil.', 'Add salt and serve.'] },
@@ -90,6 +90,8 @@ export function sampleRecipeBody(label = 'E2E'): Record<string, unknown> {
     servings: 2,
     caloriesPerServing: 120,
     image: 'https://recipely.net/assets/placeholder.jpg',
+    // Kept in the owner's library: publishing has its own rules (an own cover photo), which a disposable recipe does not need.
+    visibility: 'private',
   };
 }
 

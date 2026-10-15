@@ -19,11 +19,11 @@ import {
  * a disposable recipe so comments never leak onto real content.
  */
 test.describe('Backend · comments service', () => {
-  base('listing comments without a token returns an encrypted 401', async ({ request }) => {
+  // Guests read comments too (guest browsing); an unknown recipe is a 404, never a 401.
+  base('listing comments without a token is allowed for guests', async ({ request }) => {
     const api = new RecipelyApi(request);
     const result = await api.get(recipeCommentsPath('00000000-0000-0000-0000-000000000000'));
-    expect(result.status).toBe(401);
-    expect(result.envelope).toBeDefined();
+    expect([200, 404]).toContain(result.status);
   });
 
   test.describe('authenticated', () => {

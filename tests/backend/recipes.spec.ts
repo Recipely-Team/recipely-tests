@@ -22,10 +22,11 @@ import {
  */
 test.describe('Backend · recipes service', () => {
   base.describe('auth enforcement', () => {
-    base('GET /recipes without a token returns an encrypted 401', async ({ request }) => {
+    // Guests browse the feed (guest browsing); the answer is still an AES envelope.
+    base('GET /recipes without a token serves guests', async ({ request }) => {
       const api = new RecipelyApi(request);
       const result = await api.get(RECIPES_PATH);
-      expect(result.status).toBe(401);
+      expect(result.status).toBe(200);
       expect(result.envelope).toBeDefined();
     });
 
