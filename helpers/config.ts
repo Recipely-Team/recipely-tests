@@ -133,3 +133,42 @@ export const userFollowPath = (id: string): string => `/users/${id}/follow`;
 
 /** Unversioned readiness probe (plain JSON, outside /api/v1). */
 export const READY_URL: string = `${API_URL}/health/ready`;
+
+// Features added after the first suite (flags, meal plan, shopping list,
+// diary, fridge, feedback, discovery). Same rule: relative to API_V1_URL.
+export const FLAGS_PATH = '/flags';
+export const FEEDBACK_PATH = '/feedback';
+export const RECIPES_TRENDING_PATH = '/recipes/trending';
+export const USERS_CREATORS_PATH = '/users/creators';
+export const ME_LIKES_PATH = '/me/likes';
+export const ME_DEVICES_PATH = '/me/devices';
+export const ME_INSTAGRAM_PATH = '/me/instagram';
+
+export const MEAL_PLAN_PATH = '/me/meal-plan';
+export const MEAL_PLAN_INGREDIENTS_PATH = '/me/meal-plan/ingredients';
+export const MEAL_PLAN_COPY_PATH = '/me/meal-plan/copy';
+export const MEAL_PLAN_ENTRIES_PATH = '/me/meal-plan/entries';
+export const mealPlanEntryPath = (id: string): string => `/me/meal-plan/entries/${id}`;
+export const mealPlanEatenPath = (id: string): string => `/me/meal-plan/entries/${id}/eaten`;
+
+export const SHOPPING_LIST_PATH = '/me/shopping-list';
+export const SHOPPING_SUMMARY_PATH = '/me/shopping-list/summary';
+export const SHOPPING_ITEMS_PATH = '/me/shopping-list/items';
+export const SHOPPING_CHECKED_PATH = '/me/shopping-list/items/checked';
+export const shoppingItemPath = (id: string): string => `/me/shopping-list/items/${id}`;
+
+export const diaryDayPath = (date: string): string => `/diary/days/${date}`;
+export const diaryWaterPath = (date: string): string => `/diary/days/${date}/water`;
+export const diaryMonthPath = (month: string): string => `/diary/months/${month}`;
+export const DIARY_RECENT_PATH = '/diary/recent';
+export const DIARY_GOALS_PATH = '/diary/goals';
+export const DIARY_ENTRIES_PATH = '/diary/entries';
+export const diaryEntryPath = (id: string): string => `/diary/entries/${id}`;
+export const DIARY_FOOD_SEARCH_PATH = '/diary/foods/search';
+export const DIARY_FOOD_CATEGORIES_PATH = '/diary/foods/categories';
+export const DIARY_FOOD_PRODUCTS_PATH = '/diary/foods/products';
+export const DIARY_FOOD_RECENT_PATH = '/diary/foods/recent';
+export const DIARY_MEAL_PARSE_PATH = '/diary/meal-parse';
+
+export const FRIDGE_SCAN_PATH = '/fridge/scan';
+export const FRIDGE_IDEAS_PATH = '/fridge/ideas';
