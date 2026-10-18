@@ -1,0 +1,14 @@
+# From a fresh install to the login screen. Since the 2026 welcome tour (#609)
+# a cleared app opens on the tour; "Sign in" there leads to the login screen.
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      notVisible: "Sign in to view your recipes."
+    commands:
+      - tapOn:
+          text: "Sign in"
+          index: 0
+- extendedWaitUntil:
+    visible: "Sign in to view your recipes."
+    timeout: 15000

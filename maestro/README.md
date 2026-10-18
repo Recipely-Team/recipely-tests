@@ -36,7 +36,7 @@ APP_ID=com.recipely.app.dev maestro test maestro/flows
 
 ```bash
 # from recipely-tests/
-npm run maestro            # all flows on the connected device
+npm run maestro            # every no-cost flow on the connected device
 npm run maestro:ios        # flows tagged ios
 npm run maestro:android    # flows tagged android
 
@@ -52,6 +52,27 @@ maestro test maestro/flows/01-login-smoke.yaml
 | `02-auth-navigation.yaml` | login → register → back, login → forgot-password → back. |
 | `03-invalid-login.yaml`   | Real failing login round-trip → inline "Invalid email or password". |
 | `04-login-and-browse.yaml`| Real sign-in (needs `MAESTRO_EMAIL`/`MAESTRO_PASSWORD`) → recipes feed. |
+| `05-assistant-typing.yaml`| Assistant → "Ask by typing": the box is above the navigation bar and already focused. No model call. |
+| `06-assistant-voice.yaml` | Assistant goes live with the microphone granted (v1.7.0's web-microphone bug). **`assistant-live`**: ~2 s of a real session. |
+| `07-open-imported-draft.yaml` | Import a reel → "Open draft" → the editor opens, no crash (v1.7.0's Android crash). **`import-live`**: one real import. |
+
+Shared steps live in `maestro/subflows/` (`past-onboarding.yaml`, `sign-in.yaml`).
+
+## Before every production release
+
+```bash
+# 1. The release build carries the NATIVE assistant audio (no device, no cost)
+npm run verify:native-bundle -- ../recipely/android/app/build/outputs/apk/release/app-release.apk
+
+# 2. Install that build on an emulator, then every no-cost flow
+npm run maestro -- -e MAESTRO_EMAIL=… -e MAESTRO_PASSWORD=…
+
+# 3. The two flows that spend a little (one import, two seconds of assistant)
+npm run maestro:live -- -e MAESTRO_EMAIL=… -e MAESTRO_PASSWORD=…
+```
+
+`npm run maestro` excludes the `assistant-live` and `import-live` tags, so it never
+calls a model. Credentials: the `RECIPELY_TEST_*` values in `.env`.
 
 ```bash
 # authed happy path

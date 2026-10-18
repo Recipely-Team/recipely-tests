@@ -8,6 +8,7 @@ tags:
 ---
 - launchApp:
     clearState: true
+- runFlow: ../subflows/past-onboarding.yaml
 - assertVisible: "Sign in to view your recipes."
 
 # Login → Register
@@ -18,7 +19,7 @@ tags:
 # Register → back to Login
 - tapOn:
     text: "Sign in"
-    index: 1
+    index: -1
 - assertVisible: "Sign in to view your recipes."
 
 # Login → Forgot password

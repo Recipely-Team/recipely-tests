@@ -10,6 +10,7 @@ tags:
 ---
 - launchApp:
     clearState: true
+- runFlow: ../subflows/past-onboarding.yaml
 - assertVisible: "Sign in to view your recipes."
 - tapOn:
     text: "Email"
@@ -19,7 +20,7 @@ tags:
 - inputText: "definitely-wrong"
 - hideKeyboard
 - tapOn: "Sign in"
-- assertVisible:
-    text: "Invalid email or password"
+- extendedWaitUntil:
+    visible: "Invalid email or password"
     timeout: 20000
 - takeScreenshot: artifacts/native-invalid-login

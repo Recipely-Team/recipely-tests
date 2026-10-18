@@ -1,0 +1,31 @@
+# Fresh install → signed in on the recipes feed. Needs MAESTRO_EMAIL and
+# MAESTRO_PASSWORD. The microphone is granted and notifications denied up front,
+# so no system prompt sits over the app.
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+    permissions:
+      microphone: allow
+      notifications: deny
+- runFlow: past-onboarding.yaml
+- tapOn:
+    text: "Email"
+- inputText: ${MAESTRO_EMAIL}
+- tapOn:
+    text: "Password"
+- inputText: ${MAESTRO_PASSWORD}
+- hideKeyboard
+- tapOn:
+    text: "Sign in"
+    index: -1
+# Android asks for notifications right after sign-in, over the feed.
+- extendedWaitUntil:
+    visible: "Recipes|Don.t allow"
+    timeout: 20000
+- tapOn:
+    text: "Don.t allow"
+    optional: true
+- extendedWaitUntil:
+    visible: "Recipes"
+    timeout: 10000
