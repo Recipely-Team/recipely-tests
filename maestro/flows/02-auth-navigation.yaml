@@ -12,8 +12,14 @@ tags:
 - assertVisible: "Sign in to view your recipes."
 
 # Login → Register
+- scrollUntilVisible:
+    element: "Create account"
+    direction: DOWN
 - tapOn: "Create account"
 - assertVisible: "Join Recipely to save and share recipes."
+- scrollUntilVisible:
+    element: "Already have an account?"
+    direction: DOWN
 - assertVisible: "Already have an account?"
 
 # Register → back to Login

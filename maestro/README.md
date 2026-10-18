@@ -54,6 +54,7 @@ maestro test maestro/flows/01-login-smoke.yaml
 | `04-login-and-browse.yaml`| Real sign-in (needs `MAESTRO_EMAIL`/`MAESTRO_PASSWORD`) → recipes feed. |
 | `05-assistant-typing.yaml`| Assistant → "Ask by typing": the box is above the navigation bar and already focused. No model call. |
 | `06-assistant-voice.yaml` | Assistant goes live with the microphone granted (v1.7.0's web-microphone bug). **`assistant-live`**: ~2 s of a real session. |
+| `08-largest-text-tour.yaml` | Every main screen, screenshotted for review. Run through `maestro:largest-text`. |
 | `07-open-imported-draft.yaml` | Import a reel → "Open draft" → the editor opens, no crash (v1.7.0's Android crash). **`import-live`**: one real import. |
 
 Shared steps live in `maestro/subflows/` (`past-onboarding.yaml`, `sign-in.yaml`).
@@ -67,7 +68,12 @@ npm run verify:native-bundle -- ../recipely/android/app/build/outputs/apk/releas
 # 2. Install that build on an emulator, then every no-cost flow
 npm run maestro -- -e MAESTRO_EMAIL=… -e MAESTRO_PASSWORD=…
 
-# 3. The two flows that spend a little (one import, two seconds of assistant)
+# 3. The same flows at the LARGEST system text, and on a SMALL phone with the
+#    3-button navigation bar — then LOOK at artifacts/largest-text/*.png
+npm run maestro:largest-text -- -e MAESTRO_EMAIL=… -e MAESTRO_PASSWORD=…
+npm run maestro:small-screen -- -e MAESTRO_EMAIL=… -e MAESTRO_PASSWORD=…
+
+# 4. The two flows that spend a little (one import, two seconds of assistant)
 npm run maestro:live -- -e MAESTRO_EMAIL=… -e MAESTRO_PASSWORD=…
 ```
 

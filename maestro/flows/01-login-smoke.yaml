@@ -21,6 +21,20 @@ tags:
 - assertVisible:
     text: "Password"
 - assertVisible: "Sign in"
+- scrollUntilVisible:
+    element: "Create account"
+    direction: DOWN
 - assertVisible: "Create account"
+- scrollUntilVisible:
+    element: "Continue with Google"
+    direction: DOWN
 - assertVisible: "Continue with Google"
+- scrollUntilVisible:
+    element: "Continue without an account"
+    direction: DOWN
+# Must be tappable, not just present: on small phones it sat under the navigation bar.
+- tapOn: "Continue without an account"
+- extendedWaitUntil:
+    visible: "Recipes"
+    timeout: 15000
 - takeScreenshot: artifacts/native-login

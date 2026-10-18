@@ -22,9 +22,11 @@
     "ios:sim": "node scripts/ios-simulator-smoke.mts",
     "maestro:ios": "maestro test maestro/flows --include-tags=ios",
     "maestro:android": "maestro test maestro/flows --include-tags=android",
-    "maestro": "maestro test maestro/flows --exclude-tags=assistant-live,import-live",
+    "maestro": "maestro test maestro/flows --exclude-tags=assistant-live,import-live,largest-text",
     "maestro:live": "maestro test maestro/flows --include-tags=assistant-live,import-live",
-    "verify:native-bundle": "node scripts/assert-native-assistant-bundle.mts"
+    "verify:native-bundle": "node scripts/assert-native-assistant-bundle.mts",
+    "maestro:largest-text": "bash scripts/maestro-largest-text.sh",
+    "maestro:small-screen": "bash scripts/maestro-small-screen.sh"
   },
   "keywords": [
     "recipely",
