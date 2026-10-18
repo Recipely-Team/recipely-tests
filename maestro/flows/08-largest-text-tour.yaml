@@ -1,0 +1,37 @@
+# Every main screen, for review at the LARGEST system text — run it through
+# `npm run maestro:largest-text`, which turns the device's text size to its
+# maximum first and back afterwards.
+#
+# Many Recipely users are elderly and read at the largest size. At Android's
+# 2.0× the tab labels read "Recip…", cuisine names "Turki…", the AI button
+# "Generate a recip…" — nothing a text assertion notices, because the node
+# still holds the full string. So this flow leaves a screenshot per screen in
+# artifacts/largest-text/ to look at, and fails only if a screen cannot be
+# reached.
+appId: ${APP_ID}
+env:
+  APP_ID: com.recipely.app
+tags:
+  - ios
+  - android
+  - authed
+  - largest-text
+---
+- runFlow: ../subflows/sign-in.yaml
+- takeScreenshot: artifacts/largest-text/01-feed
+- tapOn: "My Recipes"
+- takeScreenshot: artifacts/largest-text/02-my-recipes
+- tapOn: "Chefs"
+- takeScreenshot: artifacts/largest-text/03-chefs
+- tapOn: "Diary"
+- takeScreenshot: artifacts/largest-text/04-diary
+- tapOn: "Profile"
+- takeScreenshot: artifacts/largest-text/05-profile
+- tapOn:
+    text: "Recipes"
+    index: -1
+- tapOn: "Generate a recipe with AI"
+- takeScreenshot: artifacts/largest-text/06-create
+- back
+- tapOn: "Filter & Sort"
+- takeScreenshot: artifacts/largest-text/07-filters
