@@ -1,0 +1,26 @@
+# A search that finds nothing offers to create the dish with AI, carrying the
+# search text. The catalogue is small, so this is a common path.
+#
+# No model call: the flow checks the offer and does NOT tap it (tapping starts
+# a generation at once).
+appId: ${APP_ID}
+env:
+  APP_ID: com.recipely.app
+  NO_SUCH_DISH: zzqx kebab
+tags:
+  - ios
+  - android
+  - authed
+---
+- runFlow: ../subflows/sign-in.yaml
+- tapOn: "Search recipes.*"
+- inputText: ${NO_SUCH_DISH}
+- extendedWaitUntil:
+    visible: "Nothing for .${NO_SUCH_DISH}. yet"
+    timeout: 15000
+# With the keyboard still up: the offer must be reachable without closing it.
+- scrollUntilVisible:
+    element: "Create .${NO_SUCH_DISH}. with AI"
+    direction: DOWN
+- assertVisible: "Create .${NO_SUCH_DISH}. with AI"
+- takeScreenshot: artifacts/native-search-offers-ai
