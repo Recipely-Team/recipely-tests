@@ -103,6 +103,15 @@ npm run maestro:android
 npm run ios:sim
 ```
 
+### The login budget
+
+Production allows **30 credential requests (login, register, reset) per 5 minutes per
+IP**. One backend run spends about 25 of them — the auth spec under both backend
+projects, plus the one shared login every spec reuses — and each Maestro sign-in
+spends another. A second full run within five minutes, or a run right after a batch
+of Maestro flows, fails the auth spec with `429 Too Many Requests`: the limiter
+working, not the API breaking. Wait five minutes and run again.
+
 ## Device matrix (responsive / visual)
 
 `tests/matrix/device-matrix.spec.ts` opens every guest screen (onboarding, login,
