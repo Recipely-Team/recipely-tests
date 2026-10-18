@@ -1,0 +1,28 @@
+# "Ask by typing" opens a box that can be typed into — no model call.
+#
+# Guards the Android report: on a phone with the 3-button navigation bar the
+# box sat under the bar, which takes every touch, so it could not be tapped and
+# the keyboard never opened. The box now clears the bar and takes focus itself.
+# Nothing is sent, so the assistant's backend and model are never asked.
+#
+#   maestro test maestro/flows/05-assistant-typing.yaml \
+#     -e MAESTRO_EMAIL=you@example.com -e MAESTRO_PASSWORD=secret
+appId: ${APP_ID}
+env:
+  APP_ID: com.recipely.app
+tags:
+  - ios
+  - android
+  - authed
+  - assistant
+---
+- runFlow: ../subflows/sign-in.yaml
+- tapOn: "Open the assistant"
+- tapOn: "Assistant.*"
+- tapOn: "Ask by typing"
+- assertVisible: "Type instead"
+# No tap first: the box must already have focus, or this types into nothing.
+- inputText: "pasta"
+- assertVisible: "pasta"
+- takeScreenshot: artifacts/native-assistant-typing
+- hideKeyboard

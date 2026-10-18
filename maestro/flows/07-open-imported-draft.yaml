@@ -1,0 +1,41 @@
+# Share a reel into Recipely, wait for the import, tap "Open draft" — the
+# editor must open and the app must still be running.
+#
+# Guards the Android crash that came back in v1.7.0: FlatList clips subviews by
+# default on Android, the feed under the import re-clipped as the editor slid
+# in, and Fabric died with "The specified child already has a parent". The app
+# vanished back to Instagram. The zero-cost guard is rule R in the app's
+# check:structure; this flow proves it on a device.
+#
+# Cost: ONE real import (download, transcription, one model call). Tagged
+# `import-live` — run it before a release, not on every change:
+#   maestro test maestro/flows/07-open-imported-draft.yaml \
+#     -e MAESTRO_EMAIL=you@example.com -e MAESTRO_PASSWORD=secret
+appId: ${APP_ID}
+env:
+  APP_ID: com.recipely.app
+  REEL_URL: https://www.instagram.com/reel/DcBqwv5Nsx7/
+tags:
+  - ios
+  - android
+  - authed
+  - import-live
+---
+- runFlow: ../subflows/sign-in.yaml
+# The feed stays underneath, as it does under a share from Instagram.
+- tapOn: "Generate a recipe with AI"
+- tapOn: "Import a recipe.*"
+- tapOn: "Paste a video or recipe page link"
+- inputText: ${REEL_URL}
+- hideKeyboard
+- tapOn: "Import recipe"
+- extendedWaitUntil:
+    visible: "Open draft"
+    timeout: 240000
+- tapOn: "Open draft"
+# The editor of the imported draft — and the process still alive.
+- extendedWaitUntil:
+    visible: "What we read"
+    timeout: 20000
+- assertVisible: "Preview"
+- takeScreenshot: artifacts/native-imported-draft

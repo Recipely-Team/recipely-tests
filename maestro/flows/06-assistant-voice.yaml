@@ -1,0 +1,36 @@
+# The voice assistant starts listening on a real device.
+#
+# Guards v1.7.0's bug: the phones ran the WEB microphone, so with access
+# granted the assistant said "Recipely needs the microphone to hear you", never
+# asked, and played nothing. Here the microphone is granted up front; the
+# session must go live (the menu offers "Mute") with no denial notice.
+#
+# Cost: this opens a real assistant session for about two seconds of silence
+# and closes it — a few dozen audio tokens, no prompt, no answer. Tagged
+# `assistant-live` so a plain `maestro test` run can exclude it:
+#   maestro test maestro/flows --exclude-tags=assistant-live
+#
+#   maestro test maestro/flows/06-assistant-voice.yaml \
+#     -e MAESTRO_EMAIL=you@example.com -e MAESTRO_PASSWORD=secret
+appId: ${APP_ID}
+env:
+  APP_ID: com.recipely.app
+tags:
+  - ios
+  - android
+  - authed
+  - assistant
+  - assistant-live
+---
+- runFlow: ../subflows/sign-in.yaml
+- tapOn: "Open the assistant"
+- tapOn: "Assistant.*"
+- tapOn: "Start talking"
+- assertNotVisible: "Recipely needs the microphone to hear you."
+- tapOn: "Assistant.*"
+- extendedWaitUntil:
+    visible: "Mute"
+    timeout: 15000
+- takeScreenshot: artifacts/native-assistant-live
+# End the session at once: nothing more is worth paying for.
+- tapOn: "Close the assistant"
