@@ -55,6 +55,7 @@ maestro test maestro/flows/01-login-smoke.yaml
 | `05-assistant-typing.yaml`| Assistant → "Ask by typing": the box is above the navigation bar and already focused. No model call. |
 | `06-assistant-voice.yaml` | Assistant goes live with the microphone granted (v1.7.0's web-microphone bug). **`assistant-live`**: ~2 s of a real session. |
 | `08-largest-text-tour.yaml` | Every main screen, screenshotted for review. Run through `maestro:largest-text`. |
+| `09-search-offers-ai.yaml` | A search with no results offers “Create … with AI”, reachable with the keyboard up. No model call (the offer is not tapped). |
 | `07-open-imported-draft.yaml` | Import a reel → "Open draft" → the editor opens, no crash (v1.7.0's Android crash). **`import-live`**: one real import. |
 
 Shared steps live in `maestro/subflows/` (`past-onboarding.yaml`, `sign-in.yaml`).
