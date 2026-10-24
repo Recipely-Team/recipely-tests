@@ -44,8 +44,17 @@ test.describe('Backend · users service', () => {
       expect(typeof data?.total).toBe('number');
     });
 
-    test('GET /users/:id with a malformed UUID returns 400 validation', async ({ api, session }) => {
-      const result = await api.get(userPath('not-a-uuid'), session.token);
+    // Since backend #420 the path takes a user id OR a creator handle, so a
+    // non-UUID is a handle lookup: no such creator is a 404, not a 400.
+    test('GET /users/:ref with a name that is no one\'s handle returns 404 not_found', async ({ api, session }) => {
+      const result = await api.get(userPath('no-such-creator-handle'), session.token);
+      expect(result.status).toBe(404);
+      const code = (result.decrypted as { error?: { code?: string } })?.error?.code;
+      expect(code).toBe('not_found');
+    });
+
+    test('GET /users/:ref longer than 64 characters returns 400 validation', async ({ api, session }) => {
+      const result = await api.get(userPath('x'.repeat(65)), session.token);
       expect(result.status).toBe(400);
       const code = (result.decrypted as { error?: { code?: string } })?.error?.code;
       expect(code).toBe('validation');
