@@ -1,66 +1,26 @@
-# Recipely — End-to-End Automation Tests
+<div align="center">
 
-Full-stack automation for **Recipely**, covering every surface:
+# 🧪 Recipely Tests
 
-- **Backend** — `api.recipely.net`: **every service** exercised over the
-  AES-256-GCM `/api/v1` encrypted envelope (auth, recipes, taxonomy, me,
-  favorites, likes, comments, drafts, users, notifications, AI, meal plan,
-  shopping list, diary / meal log, fridge, feedback, feature flags, trending
-  and the Chefs list, plus the cross-cutting security contract), and the plain
-  health + static legal pages.
-  Each backend spec runs **twice**:
-  - **`backend-direct`** — a server-to-server caller (like curl/Node). Proves
-    each service works for any authorized client.
-  - **`backend-mobile`** — the **same** requests carrying the React Native
-    app's headers (mobile User-Agent + client marker). Proves each service
-    works exactly as the installed app calls it.
-- **Frontend (web)** — the Firebase-hosted React Native Web build
-  (`recipely.net`), driven in real desktop browsers.
-- **Mobile** — two layers:
-  - **Device emulation** of the web build (iPhone / Pixel / iPad) via Playwright.
-  - **Native E2E** of the installed app via **Maestro** (real Simulator/Emulator).
+**End-to-end tests for [Recipely](https://github.com/Recipely-Team/recipely), run against the live product.**
 
-So every service is verified **both from the mobile app's perspective and as a
-direct backend call** — the two axes the report groups results by.
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![Maestro](https://img.shields.io/badge/Maestro-native%20e2e-6b5bd2?style=for-the-badge)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
-Written with **Playwright** (+ a tiny Node AES helper) and **Maestro**.
+</div>
 
-## Reports
+## What it covers
 
-Two reports are produced on every run, both in English:
+| Surface | How | Command |
+|---|---|---|
+| 🔐 **Backend, direct** | Every `/api/v1` service through the AES-256-GCM envelope, as a server-to-server caller | `npm run test:backend:direct` |
+| 📱 **Backend, as the app** | The same requests with the mobile app's headers | `npm run test:backend:mobile` |
+| 🖥️ **Web** | `recipely.net` in desktop Chromium, Firefox and WebKit | `npm run test:web` |
+| 📐 **Device emulation** | The web build on iPhone, Pixel and iPad viewports | `npm run test:mobile` |
+| 🤖 **Native** | The installed app on a real simulator or emulator, with Maestro | `npm run maestro` |
 
-- **`playwright-report/recipely-report.html`** — a custom, self-contained
-  dashboard grouped by **surface** (Direct / Mobile / Web) and then by
-  **service**, with a pass-rate donut, summary cards, per-test rows, inline
-  error details, and quick All/Failed/Passed/Skipped filters. Open it directly
-  in any browser.
-- **`playwright-report/index.html`** — the stock Playwright report (traces,
-  screenshots, videos for failures).
-
-## Shared test account and dated writes
-
-The authed specs share one account. `global-setup.ts` logs it in once per run
-and the workers read that session from `test-results/.session.json`; parallel
-logins used to queue behind password hashing and time out.
-
-The meal plan and diary write to dated, account-wide stores, so each backend
-project writes only inside its own far-future month (`helpers/calendar.ts`:
-direct = March 2031, mobile = May 2031) and clears it afterwards. The shopping
-list's writes (including the account-wide "clear checked") run once, on
-`backend-direct`. Contract checks on model-backed routes (fridge ideas, meal
-parse) stop at validation, but the AI rate limiter still counts them, so they
-also run once.
-
-## App flow under test
-
-```
-(unauthenticated) ──► /login ──► Sign in ─┬─ invalid ─► inline error
-                          │               └─ valid ───► /recipes feed
-                          ├─► Create account ─► /register
-                          └─► Forgot password ─► reset request
-
-Backend:  /health (plain)  ·  /privacy /terms (HTML)  ·  /api/v1/** (AES-GCM envelope)
-```
+Every service is checked **from the app's side and as a direct backend call**, the two axes the report groups results by.
 
 ## Install
 
@@ -112,7 +72,56 @@ spends another. A second full run within five minutes, or a run right after a ba
 of Maestro flows, fails the auth spec with `429 Too Many Requests`: the limiter
 working, not the API breaking. Wait five minutes and run again.
 
-## Device matrix (responsive / visual)
+## Reference
+
+<details>
+<summary><b>Reports</b></summary>
+
+Two reports are produced on every run, both in English:
+
+- **`playwright-report/recipely-report.html`** — a custom, self-contained
+  dashboard grouped by **surface** (Direct / Mobile / Web) and then by
+  **service**, with a pass-rate donut, summary cards, per-test rows, inline
+  error details, and quick All/Failed/Passed/Skipped filters. Open it directly
+  in any browser.
+- **`playwright-report/index.html`** — the stock Playwright report (traces,
+  screenshots, videos for failures).
+
+</details>
+
+<details>
+<summary><b>Shared test account and dated writes</b></summary>
+
+The authed specs share one account. `global-setup.ts` logs it in once per run
+and the workers read that session from `test-results/.session.json`; parallel
+logins used to queue behind password hashing and time out.
+
+The meal plan and diary write to dated, account-wide stores, so each backend
+project writes only inside its own far-future month (`helpers/calendar.ts`:
+direct = March 2031, mobile = May 2031) and clears it afterwards. The shopping
+list's writes (including the account-wide "clear checked") run once, on
+`backend-direct`. Contract checks on model-backed routes (fridge ideas, meal
+parse) stop at validation, but the AI rate limiter still counts them, so they
+also run once.
+
+</details>
+
+<details>
+<summary><b>App flow under test</b></summary>
+
+```
+(unauthenticated) ──► /login ──► Sign in ─┬─ invalid ─► inline error
+                          │               └─ valid ───► /recipes feed
+                          ├─► Create account ─► /register
+                          └─► Forgot password ─► reset request
+
+Backend:  /health (plain)  ·  /privacy /terms (HTML)  ·  /api/v1/** (AES-GCM envelope)
+```
+
+</details>
+
+<details>
+<summary><b>Device matrix (responsive / visual)</b></summary>
 
 `tests/matrix/device-matrix.spec.ts` opens every guest screen (onboarding, login,
 register, forgot password, the feed, a recipe detail, chefs, about, privacy) on 13
@@ -137,7 +146,10 @@ npm run test:matrix
 `RECIPELY_PROXY_API=1` makes the API calls from Node and answers with the page's
 origin allowed — a local origin is not one the API's CORS accepts.
 
-## Projects (Playwright)
+</details>
+
+<details>
+<summary><b>Projects (Playwright)</b></summary>
 
 | Project            | Engine    | Surface                  | Stands in for            |
 |--------------------|-----------|--------------------------|--------------------------|
@@ -154,7 +166,10 @@ origin allowed — a local origin is not one the API's CORS accepts.
 > `backend-mobile`, so the same assertions cover the direct-call and the
 > mobile-app axes.
 
-## Test files
+</details>
+
+<details>
+<summary><b>Test files</b></summary>
 
 | File | Surface | Covers |
 |------|---------|--------|
@@ -194,7 +209,10 @@ re-implements the app's AES-256-GCM wire format with Node `crypto`;
 `helpers/api.ts` wraps a Playwright `APIRequestContext` to encrypt requests and
 decrypt response envelopes. `helpers/config.ts` centralises targets + `.env`.
 
-## The encrypted backend (`/api/v1`)
+</details>
+
+<details>
+<summary><b>The encrypted backend (<code>/api/v1</code>)</b></summary>
 
 Every `/api/v1` request body and **every** response — including errors — is an
 AES-256-GCM envelope (`{ payload, iv }`) keyed by a secret shared with the
@@ -204,7 +222,10 @@ the full login error body), set `RECIPELY_API_AES_KEY` to the real backend key;
 otherwise those assertions fall back to verifying the envelope/error contract
 and are clearly annotated.
 
-## Live runs against dev
+</details>
+
+<details>
+<summary><b>Live runs against dev</b></summary>
 
 The gated specs cost worker time and model calls, so a plain `npm test` skips them. Run them against dev with
 `RECIPELY_API_URL=https://dev-api.recipely.net RECIPELY_WEB_URL=https://app-recipely-dev.web.app` plus the gate
@@ -212,7 +233,10 @@ The gated specs cost worker time and model calls, so a plain `npm test` skips th
 sits behind Cloudflare Access, which a test browser cannot pass. Backend live specs run on `backend-direct`
 only (`--workers=1`). Everything they create is deleted through owner APIs, except device rows (no delete endpoint).
 
-## Reporters
+</details>
+
+<details>
+<summary><b>Reporters</b></summary>
 
 `reporters/html-reporter.ts` writes the English dashboard described above
 (`playwright-report/recipely-report.html`), grouped by surface → service.
@@ -222,7 +246,10 @@ tests — each with a copy-paste `claude "…"` command that starts Claude fixin
 that test/selector, plus one **bulk** command for all failures. Also written to
 `test-results/failures.md` (Markdown table) and `test-results/failures.json`.
 
-## Notes
+</details>
+
+<details>
+<summary><b>Notes</b></summary>
 
 - **No `testID`s** in the app: selectors use accessibility roles, visible i18n
   text, and input placeholders. Locale is pinned to **en-US**.
@@ -231,3 +258,5 @@ that test/selector, plus one **bulk** command for all failures. Also written to
   lower `WORKERS` if you see 429s.
 - **Mobile vs. emulation**: Playwright mobile projects run the *web* build under
   a device profile. True native coverage lives in `maestro/`.
+
+</details>
